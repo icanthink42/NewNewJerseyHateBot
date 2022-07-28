@@ -20,7 +20,7 @@ class PlaylistSong:
         url = info["formats"][0]["url"]
         vc = get(data.bot.voice_clients, guild=self.channel.guild)
         if vc is None or not vc.is_connected():
-            try:  # Try catch because sometimes vc.is_connected() will be incorrect
+            try:
                 vc = await self.channel.connect()
             except:
                 pass
@@ -40,10 +40,7 @@ async def song_finish():
     elif datetime.now().weekday() == data.config["toad_day"]:
         vc = get(data.bot.voice_clients, guild=data.general.guild)
         if vc is None or not vc.is_connected():
-            try:  # Try catch because sometimes vc.is_connected() will be incorrect
-                vc = await data.general.connect()
-            except:
-                pass
+            vc = await data.general.connect()
         if vc.is_playing():
             vc.stop()
         vc.play(discord.FFmpegPCMAudio(data.toad_info["formats"][0]["url"], **data.config["ffmpeg_options"]),
