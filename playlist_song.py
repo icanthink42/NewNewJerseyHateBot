@@ -1,4 +1,4 @@
-from datetime import timezone, datetime
+from datetime import datetime
 
 import discord
 from discord.utils import get
@@ -45,5 +45,5 @@ async def song_finish():
     else:
         await data.bot.change_presence(
             activity=discord.Activity(type=discord.ActivityType.listening, name="Nothing! Play something with /play"))
-        vc = get(data.bot.voice_clients, guild=finished_song.channel.guild)
+        vc = get(data.bot.voice_clients, guild=data.general.guild)
         vc.disconnect()
