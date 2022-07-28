@@ -140,8 +140,9 @@ async def skip_song():
     vc = get(data.bot.voice_clients, guild=data.general.guild)
     if vc is None or not vc.is_connected():
         return
-    if len(data.queue) != 0:
-        data.queue.pop(0)
+    if len(data.queue) == 0:
+        return
+    data.queue.pop(0)
     if vc.is_playing():
         vc.stop()
     await data.queue[0].play_song()
