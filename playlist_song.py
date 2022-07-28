@@ -20,10 +20,7 @@ class PlaylistSong:
         url = info["formats"][0]["url"]
         vc = get(data.bot.voice_clients, guild=self.channel.guild)
         if vc is None or not vc.is_connected():
-            try:
-                vc = await self.channel.connect()
-            except:
-                pass
+            vc = await self.channel.connect()
         if vc.is_playing():
             vc.stop()
         vc.play(discord.FFmpegPCMAudio(url, **data.config["ffmpeg_options"]), after=lambda err: data.bot.loop.create_task(song_finish()))
