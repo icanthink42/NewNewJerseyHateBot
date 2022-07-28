@@ -26,8 +26,9 @@ class PlaylistSong:
 
 async def song_finish():
     print("song_finish")
-    finished_song = data.queue[0]
-    data.queue.pop(0)
+    if len(data.queue) != 0:
+        finished_song = data.queue[0]
+        data.queue.pop(0)
     if len(data.queue) > 0:
         await data.queue[0].play_song()
     else:

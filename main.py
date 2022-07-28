@@ -151,7 +151,7 @@ async def vc_insult_nj():
     if vc.is_playing():
         vc.stop()
     if vc.channel.id != data.general.id:
-        await   vc.disconnect()
+        await vc.disconnect()
         data.general.connect()
     file = basic_functions.random_file(data.config["audio_files_dir"])
     vc.play(discord.FFmpegPCMAudio(file), after=lambda err: data.bot.loop.create_task(skip_song()))
