@@ -143,7 +143,7 @@ async def skip_song():
     if len(data.queue) != 0:
         data.queue.pop(0)
     if vc.is_playing():
-        await vc.stop()
+        vc.stop()
     await data.queue[0].play_song()
 
 
