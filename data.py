@@ -5,6 +5,7 @@ config = {}
 bot = None
 queue = []
 general = None
+toad_info = None
 
 
 def reload_config():

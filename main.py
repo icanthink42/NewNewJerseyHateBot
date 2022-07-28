@@ -15,6 +15,9 @@ data.bot = discord.Bot(intents=intents)
 
 data.reload_config()
 
+with YoutubeDL(data.config["ydl_options"]) as ydl:
+    data.toad_info = ydl.extract_info(data.config["toad_url"], download=False)
+
 
 @data.bot.event
 async def on_ready():
