@@ -22,7 +22,7 @@ class PlaylistSong:
         if vc is None or not vc.is_connected():
             vc = await self.channel.connect()
         if vc.is_playing():
-            await vc.stop()
+            vc.stop()
         vc.play(discord.FFmpegPCMAudio(url, **data.config["ffmpeg_options"]), after=lambda err: data.bot.loop.create_task(song_finish()))
         await data.bot.change_presence(
             activity=discord.Activity(type=discord.ActivityType.listening, name=info['title']))
