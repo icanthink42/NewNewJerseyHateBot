@@ -25,7 +25,6 @@ class PlaylistSong:
 
 
 async def song_finish():
-    print("song_finish")
     if len(data.queue) != 0:
         finished_song = data.queue[0]
         data.queue.pop(0)

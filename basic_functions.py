@@ -12,7 +12,7 @@ def contains_civ_e(text: str) -> bool:
 
 
 # Returns the index after "I'm" or "Im", or -1 if not found
-def contains_im(text: str) -> int:
+def im_index(text: str) -> int:
     # "Im"
     index = text.lower().find("im ")
     if index == 0 or (index > 0 and text[index - 1].isspace()):
