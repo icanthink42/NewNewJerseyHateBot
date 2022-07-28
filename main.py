@@ -1,4 +1,3 @@
-import json
 import random
 
 import discord
@@ -33,12 +32,12 @@ async def on_message(message: discord.Message):
         await message.reply(random.choice(data.config["nj_insults"]))
     if basic_functions.contains_civ_e(message.content):
         await message.reply(random.choice(data.config["civ_e_insults"]))
-    if message.content.startswith(")") or message.content.startswith(">") or message.content.startswith("<@964331688832417802>"):
+    if message.content.startswith(")") or message.content.startswith(">") or message.content.startswith(
+            "<@964331688832417802>"):
         await message.reply("Imagine not using slash commands. So lame! Use the new slash commands by typing /")
     im_index = basic_functions.im_index(message.content)
     if im_index != -1:
         await message.reply(f"Hi {message.content[im_index:]}, I'm the New Jersey Hate Bot!")
-
 
 
 @tasks.loop(hours=1)

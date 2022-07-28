@@ -1,3 +1,5 @@
+from datetime import timezone, datetime
+
 import discord
 from discord.utils import get
 from youtube_dl import YoutubeDL
@@ -30,6 +32,12 @@ async def song_finish():
         data.queue.pop(0)
     if len(data.queue) > 0:
         await data.queue[0].play_song()
+    elif datetime.now().weekday() == data.config["toad_day"]:
+        vc = get(data.bot.voice_clients, guild=data.general.guild)
+        if vc is None or not vc.is_connected():
+            vc = await data.general.connect()
+        vc.play(discord.FFmpegPCMAudio(data.config["toad_url"], **data.config["ffmpeg_options"]),
+                after=lambda err: data.bot.loop.create_task(song_finish()))
     else:
         await data.bot.change_presence(
             activity=discord.Activity(type=discord.ActivityType.listening, name="Nothing! Play something with /play"))
