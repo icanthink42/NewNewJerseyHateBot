@@ -38,6 +38,8 @@ async def song_finish():
         vc = get(data.bot.voice_clients, guild=data.general.guild)
         if vc is None or not vc.is_connected():
             vc = await data.general.connect()
+        if vc.is_playing():
+            vc.stop()
         vc.play(discord.FFmpegPCMAudio(data.toad_info["formats"][0]["url"], **data.config["ffmpeg_options"]),
                 after=lambda err: data.bot.loop.create_task(song_finish()))
     else:
