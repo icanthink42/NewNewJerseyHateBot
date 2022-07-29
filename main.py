@@ -1,6 +1,8 @@
 import random
+from io import BytesIO
 
 import discord
+from PIL import Image
 from discord.ext import tasks
 from discord.utils import get
 from youtube_dl import YoutubeDL
@@ -8,6 +10,8 @@ from youtube_dl import YoutubeDL
 import basic_functions
 import data
 from playlist_song import PlaylistSong
+from Deepfry import deepfry
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -41,6 +45,12 @@ async def on_message(message: discord.Message):
     im_index = basic_functions.im_index(message.content)
     if im_index != -1:
         await message.reply(f"Hi {message.content[im_index:]}, I'm the New Jersey Hate Bot!")
+    if message.attachments and message.attachments[0].content_type in ('image/jpeg', 'image/jpg', 'image/png'):
+        img_bytes = BytesIO(await message.attachments[0].read())
+        img = Image.open(img_bytes)
+        img.save("before-deepfry.png")
+        deepfry.deepfry("before-deepfry.png", "deepfry.png")
+        await message.reply("fry", file=discord.File("deepfry.png"))
 
 
 @tasks.loop(hours=1)
