@@ -67,6 +67,8 @@ async def ping(ctx):
 async def play(ctx, url: str, channel: discord.VoiceChannel):
     if data.toad_mode:
         url = data.config["toad_url"]
+    if data.honky_mode:
+        url = data.config["honky_url"]
     try:
         with YoutubeDL(data.config["ydl_options"]) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -137,8 +139,14 @@ async def queue(ctx):
 
 @data.bot.slash_command(guild_ids=data.local_config["guilds"], description="TOAD")
 async def toad(ctx):
-    data.toad_mode = True
+    data.toad_mode = not data.toad_mode
     await ctx.respond("Toad mode set to " + str(data.toad_mode), ephemeral=True)
+
+
+@data.bot.slash_command(guild_ids=data.local_config["guilds"], description="Musical Excellence")
+async def honky(ctx):
+    data.honky_mode = not data.honky_mode
+    await ctx.respond("Honky mode set to " + str(data.honky_mode), ephemeral=True)
 
 
 @data.bot.slash_command(guild_ids=data.local_config["guilds"], description="Reloads the bots config")

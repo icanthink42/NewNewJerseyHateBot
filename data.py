@@ -7,7 +7,7 @@ queue = []
 general = None
 toad_info = None
 toad_mode = False
-honkey_mode = False
+honky_mode = False
 
 def reload_config():
     global local_config
