@@ -9,9 +9,9 @@ from youtube_dl import YoutubeDL
 
 import basic_functions
 import data
+import playlist_song
 from playlist_song import PlaylistSong
 from Deepfry import deepfry
-
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -65,6 +65,8 @@ async def ping(ctx):
 
 @data.bot.slash_command(guild_ids=data.local_config["guilds"], description="Play a song on the bot")
 async def play(ctx, url: str, channel: discord.VoiceChannel):
+    if data.toad_mode:
+        url = data.config["toad_url"]
     try:
         with YoutubeDL(data.config["ydl_options"]) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -88,7 +90,11 @@ async def play(ctx, url: str, channel: discord.VoiceChannel):
     song = PlaylistSong(url, info, channel, ctx.author)
     data.queue.append(song)
     if len(data.queue) > 1:
-        await ctx.respond(f"Added {info['title']} to the queue", ephemeral=True)
+        if data.queue[0].toad:
+            await ctx.respond(f"Playing {info['title']}...", ephemeral=True)
+            await skip_song()
+        else:
+            await ctx.respond(f"Added {info['title']} to the queue", ephemeral=True)
     else:
         await ctx.respond(f"Playing {info['title']}...", ephemeral=True)
         await song.play_song()
@@ -129,6 +135,12 @@ async def queue(ctx):
     await ctx.respond(embed=embed, ephemeral=True)
 
 
+@data.bot.slash_command(guild_ids=data.local_config["guilds"], description="TOAD")
+async def toad(ctx):
+    data.toad_mode = True
+    await ctx.respond("Toad mode set to " + str(data.toad_mode), ephemeral=True)
+
+
 @data.bot.slash_command(guild_ids=data.local_config["guilds"], description="Reloads the bots config")
 async def reload(ctx):
     if ctx.author.id not in data.config["mods"]:
@@ -149,15 +161,14 @@ async def get_emoji(guild: discord.Guild, arg):
 async def skip_song():
     vc = get(data.bot.voice_clients, guild=data.general.guild)
     if vc is None or not vc.is_connected():
+        data.queue = []
         return
     if len(data.queue) == 0:
         return
-    data.queue.pop(0)
-    if vc.is_playing():
+    if vc.is_playing():  # Length of queue must be checked before and after because stopping audio changes the queues
         vc.stop()
     if len(data.queue) == 0:
         return
-    await data.queue[0].play_song()
 
 
 async def vc_insult_nj():
@@ -170,7 +181,7 @@ async def vc_insult_nj():
         await vc.disconnect()
         data.general.connect()
     file = basic_functions.random_file(data.config["audio_files_dir"])
-    vc.play(discord.FFmpegPCMAudio(file), after=lambda err: data.bot.loop.create_task(skip_song()))
+    vc.play(discord.FFmpegPCMAudio(file), after=lambda err: data.bot.loop.create_task(playlist_song.song_finish(False)))
 
 
 data.bot.run(data.local_config["token"])
