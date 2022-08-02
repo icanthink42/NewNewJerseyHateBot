@@ -20,5 +20,7 @@
   ],
   "toad_url": "https://youtu.be/wrdK57qgNqA",
   "toad_day": 4,
-  "honky_url": "https://youtu.be/oxCisjq3uEY"
+  "honky_url": "https://youtu.be/oxCisjq3uEY",
+  "save_data_dir": "save_data",
+  "birthday_frequency": 3600
 }

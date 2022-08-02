@@ -1,4 +1,5 @@
 import random
+import time
 from io import BytesIO
 
 import discord
@@ -22,12 +23,17 @@ data.reload_config()
 with YoutubeDL(data.config["ydl_options"]) as ydl:
     data.toad_info = ydl.extract_info(data.config["toad_url"], download=False)
 
+data.load_save_data()
+data.fix_data()
+
 
 @data.bot.event
 async def on_ready():
-    data.general = data.bot.get_channel(data.local_config["general_id"])
+    data.general = await data.bot.fetch_channel(data.local_config["general_id"])
+    data.vc_text = await data.bot.fetch_channel(data.local_config["vc_text_id"])
     print(f"We have logged in as {data.bot.user}")
     hate_nj_vc_loop.start()
+    update_loop.start()
 
 
 @data.bot.event
@@ -56,6 +62,14 @@ async def on_message(message: discord.Message):
 @tasks.loop(hours=1)
 async def hate_nj_vc_loop():
     await vc_insult_nj()
+
+
+@tasks.loop(seconds=20)
+async def update_loop():
+    if time.time() > data.save_data["last_birthday_wish"] + data.config["birthday_frequency"]:
+        await data.vc_text.send("Happy Birthday <@955141074161111072>!")
+        data.save_data["last_birthday_wish"] = time.time()
+        data.save_save_data()
 
 
 @data.bot.slash_command(guild_ids=data.local_config["guilds"], description="Ping the bot")
