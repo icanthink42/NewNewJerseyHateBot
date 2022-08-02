@@ -7,6 +7,10 @@ def contains_nj(text: str) -> bool:
     return "newjersey" in text.lower().replace(" ", "")
 
 
+def contains_1984(text: str) -> bool:
+    return "literally1984" in text.lower().replace(" ", "")
+
+
 def contains_civ_e(text: str) -> bool:
     return "civile" in text.lower().replace(" ", "") or "civil engineering" in text.lower().replace(" ", "")
 

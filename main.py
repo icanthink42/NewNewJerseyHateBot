@@ -57,6 +57,8 @@ async def on_message(message: discord.Message):
         img.save("before-deepfry.png")
         deepfry.deepfry("before-deepfry.png", "deepfry.png")
         await message.reply("fry", file=discord.File("deepfry.png"))
+    if basic_functions.contains_1984(message.content):
+        await message.reply(random.choice(data.config["1984_posts"]))
 
 
 @tasks.loop(hours=1)
