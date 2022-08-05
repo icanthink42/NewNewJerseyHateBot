@@ -40,6 +40,16 @@ async def on_ready():
 async def on_message(message: discord.Message):
     if message.author.bot:  # This might be funny to remove
         return
+
+    if message.channel.id not in data.local_config["channel_whitelist"]:
+        return
+
+    if message.attachments and message.attachments[0].content_type in ('image/jpeg', 'image/jpg', 'image/png') and message.content == "fry":
+        img_bytes = BytesIO(await message.attachments[0].read())
+        img = Image.open(img_bytes)
+        img.save("before-deepfry.png")
+        deepfry.deepfry("before-deepfry.png", "deepfry.png")
+        await message.reply("fry", file=discord.File("deepfry.png"))
     if basic_functions.contains_nj(message.content):
         await message.add_reaction(await get_emoji(message.guild, "shut"))
         await message.reply(random.choice(data.config["nj_insults"]))
@@ -51,12 +61,7 @@ async def on_message(message: discord.Message):
     im_index = basic_functions.im_index(message.content)
     if im_index != -1:
         await message.reply(f"Hi {message.content[im_index:]}, I'm the New Jersey Hate Bot!")
-    if message.attachments and message.attachments[0].content_type in ('image/jpeg', 'image/jpg', 'image/png'):
-        img_bytes = BytesIO(await message.attachments[0].read())
-        img = Image.open(img_bytes)
-        img.save("before-deepfry.png")
-        deepfry.deepfry("before-deepfry.png", "deepfry.png")
-        await message.reply("fry", file=discord.File("deepfry.png"))
+
     if basic_functions.contains_1984(message.content):
         await message.reply(random.choice(data.config["1984_posts"]))
 
