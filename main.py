@@ -51,7 +51,8 @@ async def on_message(message: discord.Message):
         deepfry.deepfry("before-deepfry.png", "deepfry.png")
         await message.reply("fry", file=discord.File("deepfry.png"))
     if basic_functions.contains_nj(message.content):
-        await message.add_reaction(await get_emoji(message.guild, "shut"))
+        if message.guild.id == 925208758370590820:
+            await message.add_reaction(await get_emoji(message.guild, "shut"))
         await message.reply(random.choice(data.config["nj_insults"]))
     if basic_functions.contains_civ_e(message.content):
         await message.reply(random.choice(data.config["civ_e_insults"]))
