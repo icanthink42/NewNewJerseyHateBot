@@ -61,6 +61,8 @@ async def on_message(message: discord.Message):
 
     if basic_functions.contains_1984(message.content):
         await message.reply(random.choice(data.config["1984_posts"]))
+    if "math" in message.content:
+        await message.reply("<@352106212109713408> someone mentioned math!")
 
 
 @tasks.loop(hours=1)
