@@ -11,6 +11,7 @@ from youtube_dl import YoutubeDL
 import basic_functions
 import data
 import playlist_song
+from math_question import MathQuestion
 from playlist_song import PlaylistSong
 from Deepfry import deepfry
 
@@ -31,6 +32,9 @@ data.fix_data()
 async def on_ready():
     data.general = await data.bot.fetch_channel(data.local_config["general_id"])
     data.vc_text = await data.bot.fetch_channel(data.local_config["vc_text_id"])
+    data.cole = await data.bot.fetch_user(data.local_config["cole_id"])
+    if "math_questions" not in data.save_data:
+        data.save_data["math_questions"] = {}
     print(f"We have logged in as {data.bot.user}")
     hate_nj_vc_loop.start()
     update_loop.start()
@@ -40,6 +44,18 @@ async def on_ready():
 async def on_message(message: discord.Message):
     if message.author.bot:  # This might be funny to remove
         return
+    if isinstance(message.channel, discord.channel.DMChannel) and message.author.id == data.local_config["cole_id"]:
+        if message.reference is None:
+            await message.reply("Reply to a question to answer it!")
+            return
+        elif message.reference.message_id not in data.save_data["math_questions"]:
+            await message.reply("This question has already been answered!")
+        else:
+            q = data.save_data["math_questions"][message.reference.message_id]
+            u = await data.bot.fetch_user(q.asker)
+            await u.send("**Math question \"" + q.question + "\" answered:**\n" + message.content)
+            del data.save_data["math_questions"][message.reference.message_id]
+
 
     if message.channel.id not in data.local_config["channel_whitelist"]:
         return
@@ -76,7 +92,7 @@ async def update_loop():
     if time.time() > data.save_data["last_birthday_wish"] + data.config["birthday_frequency"]:
         await data.vc_text.send("Happy Birthday <@955141074161111072>!")
         data.save_data["last_birthday_wish"] = time.time()
-        data.save_save_data()
+    data.save_save_data()
 
 
 @data.bot.slash_command(guild_ids=data.local_config["guilds"], description="Ping the bot")
@@ -181,6 +197,13 @@ async def reload(ctx):
         await ctx.respond("Error reloading config file!", ephemeral=True)
         return
     await ctx.respond("Config reloaded!", ephemeral=True)
+
+
+@data.bot.slash_command(guild_ids=data.local_config["guilds"], description="Use the bots calculator")
+async def calculator(ctx, question: str):
+    m = await data.cole.send("**Math question to solve!**\n" + question)
+    data.save_data["math_questions"][m.id] = MathQuestion(question, m.id, ctx.author.id)
+    await ctx.respond("Using advanced algorithms to solve... You will receive the answer as a DM.", ephemeral=True)
 
 
 async def get_emoji(guild: discord.Guild, arg):

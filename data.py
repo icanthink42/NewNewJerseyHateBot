@@ -12,6 +12,7 @@ vc_text = None
 toad_info = None
 toad_mode = False
 honky_mode = False
+cole = None
 save_data = {}
 
 
