@@ -11,7 +11,7 @@ from youtube_dl import YoutubeDL
 import basic_functions
 import data
 import playlist_song
-from math_question import MathQuestion
+from classes import MathQuestion, Ratio, RatioButtons
 from playlist_song import PlaylistSong
 from Deepfry import deepfry
 
@@ -35,6 +35,10 @@ async def on_ready():
     data.cole = await data.bot.fetch_user(data.local_config["cole_id"])
     if "math_questions" not in data.save_data:
         data.save_data["math_questions"] = {}
+    if "ratios" not in data.save_data:
+        data.save_data["ratios"] = {}
+    if "ratio_count" not in data.save_data:
+        data.save_data["ratio_count"] = {}
     print(f"We have logged in as {data.bot.user}")
     hate_nj_vc_loop.start()
     update_loop.start()
@@ -55,7 +59,6 @@ async def on_message(message: discord.Message):
             u = await data.bot.fetch_user(q.asker)
             await u.send("**Math question \"" + q.question + "\" answered:**\n" + message.content)
             del data.save_data["math_questions"][message.reference.message_id]
-
 
     if message.channel.id not in data.local_config["channel_whitelist"]:
         return
@@ -80,6 +83,11 @@ async def on_message(message: discord.Message):
         await message.reply(random.choice(data.config["1984_posts"]))
     if "math" in message.content.lower():
         await message.reply("<@352106212109713408> someone mentioned math!")
+    if "ratio" in message.content.lower() and message.reference is not None:
+        m = await message.reply("Ratio Vote! (0)", view=RatioButtons())
+        target_m = await message.channel.fetch_message(message.reference.message_id)
+        data.save_data["ratios"][m.id] = Ratio(m.id, m.channel.id, target_m.author.id, message.author.id, time.time())
+
 
 
 @tasks.loop(hours=1)
@@ -87,11 +95,36 @@ async def hate_nj_vc_loop():
     await vc_insult_nj()
 
 
-@tasks.loop(seconds=20)
+@tasks.loop(seconds=10)
 async def update_loop():
     if time.time() > data.save_data["last_birthday_wish"] + data.config["birthday_frequency"]:
         await data.vc_text.send("Happy Birthday <@955141074161111072>!")
         data.save_data["last_birthday_wish"] = time.time()
+    r_delete = []
+    for r_id in data.save_data["ratios"]:
+        r = data.save_data["ratios"][r_id]
+        if r.time_sent + data.config["ratio_time"] > time.time():
+            continue
+        c = await data.bot.fetch_channel(r.channel_id)
+        m = await c.fetch_message(r.message_id)
+        r_delete.append(m.id)
+        if len(r.votes) < 2:
+            await m.reply("Not enough votes to determine an outcome!")
+            continue
+        if r.count_votes() > 0:
+            data.add_ratio_score(r.target_id, 1)
+            await m.reply("Ratio was successful")
+            continue
+        elif r.count_votes() < 0:
+            data.add_ratio_score(r.accuser_id, 1)
+            await m.reply("Ratio failed")
+            continue
+        elif r.count_votes() == 0:
+            await m.reply("Ratio tied")
+            continue
+    for d in r_delete:
+        del data.save_data["ratios"][d]
+
     data.save_save_data()
 
 

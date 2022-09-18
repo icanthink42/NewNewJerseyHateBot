@@ -42,3 +42,9 @@ def reload_config():
 def fix_data():
     if "last_birthday_wish" not in save_data:
         save_data["last_birthday_wish"] = time.time()
+
+
+def add_ratio_score(user_id, amount):
+    if user_id not in save_data["ratio_count"]:
+        save_data["ratio_count"][user_id] = 0
+    save_data["ratio_count"][user_id] += amount
