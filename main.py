@@ -239,6 +239,15 @@ async def calculator(ctx, question: str):
     await ctx.respond("Using advanced algorithms to solve... You will receive the answer as a DM.", ephemeral=True)
 
 
+@data.bot.slash_command(guild_ids=data.local_config["guilds"], description="See a list of how many times everyone has been ratiod")
+async def ratios(ctx):
+    o = ""
+    for u_id in data.save_data["ratio_count"]:
+        count = data.save_data["ratio_count"][u_id]
+        o += "<@" + str(u_id) + ">: " + str(count) + "\n"
+    await ctx.respond(o, ephemeral=True)
+
+
 async def get_emoji(guild: discord.Guild, arg):
     return get(guild.emojis, name=arg)
 
@@ -267,6 +276,7 @@ async def vc_insult_nj():
         data.general.connect()
     file = basic_functions.random_file(data.config["audio_files_dir"])
     vc.play(discord.FFmpegPCMAudio(file), after=lambda err: data.bot.loop.create_task(playlist_song.song_finish(False)))
+
 
 
 data.bot.run(data.local_config["token"])
