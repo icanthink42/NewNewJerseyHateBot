@@ -93,7 +93,8 @@ async def on_message(message: discord.Message):
         if "ratio" in message.content.lower():
             await message.reply("I don't delete ratio votes to be fair to both sides. Jack will make this feature work better when its not 3:15am")
         else:
-            await message.delete()
+            m = await message.channel.fetch_message(message.reference.message_id)
+            await m.delete()
 
 
 
