@@ -89,7 +89,7 @@ async def on_message(message: discord.Message):
         m = await message.reply("Ratio Vote! (0)", view=RatioButtons())
         target_m = await message.channel.fetch_message(message.reference.message_id)
         data.save_data["ratios"][m.id] = Ratio(m.id, m.channel.id, target_m.author.id, message.author.id, time.time())
-    if "shut" in message.content.lower() and "up" in message.content.lower():
+    if ("shut" in message.content.lower() and "up" in message.content.lower()) or ("fuck" in message.content.lower() and "off" in message.content.lower()):
         if "ratio" in message.content.lower():
             await message.reply("I don't delete ratio votes to be fair to both sides. Jack will make this feature work better when its not 3:15am")
         else:
