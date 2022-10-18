@@ -95,6 +95,8 @@ async def on_message(message: discord.Message):
         else:
             m = await message.channel.fetch_message(message.reference.message_id)
             await m.delete()
+    if message.content == "mmmkick":
+        await message.author.kick()
 
 
 
