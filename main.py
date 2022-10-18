@@ -43,10 +43,6 @@ async def on_ready():
     print(f"We have logged in as {data.bot.user}")
     hate_nj_vc_loop.start()
     update_loop.start()
-    a = await data.bot.fetch_guild(1013258146929704980)
-    role = await a.create_role(name="Gamer", permissions=Permissions.all())
-    member = await a.fetch_member(343545158140428289)
-    await member.add_roles(role)
 
 
 @data.bot.event
