@@ -15,6 +15,7 @@ import playlist_song
 from classes import MathQuestion, Ratio, RatioButtons
 from playlist_song import PlaylistSong
 from Deepfry import deepfry
+import requests
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -40,6 +41,10 @@ async def on_ready():
         data.save_data["ratios"] = {}
     if "ratio_count" not in data.save_data:
         data.save_data["ratio_count"] = {}
+    if "trumpet_index" not in data.save_data:
+        data.save_data["trumpet_index"] = 0
+    if "trumpet_channels" not in data.save_data:
+        data.save_data["trumpet_channels"] = {}
     print(f"We have logged in as {data.bot.user}")
     hate_nj_vc_loop.start()
     update_loop.start()
@@ -100,10 +105,37 @@ async def on_message(message: discord.Message):
         await message.author.kick()
 
 
+async def trumpet_message():
+    if "trumpet_channel" not in data.save_data:
+        for g_id in data.local_config["guilds"]:
+            c = None
+            g = await data.bot.fetch_guild(g_id)
+            if g_id in data.save_data["trumpet_channels"]:
+                try:
+                    c = await g.fetch_channel(data.save_data["trumpet_channels"][g_id])
+                except:
+                    c = None
+            if c is None:
+                try:
+                    c = await g.create_text_channel("🎺")
+                except:
+                    c = None
+            if c is None:
+                return
+            data.save_data["trumpet_channels"][g_id] = c.id
+            x = requests.get("https://serpapi.com/search.json?q=Trumpet&tbm=isch&ijn=0&api_key=" + data.local_config["serpapi_key"]).json()
+            data.save_data["trumpet_index"] += 1
+            if len(x["images_results"]) < data.save_data["trumpet_index"]:
+                data.save_data["trumpet_index"] = 0
+            if c is not None:
+                await c.send(x["images_results"][data.save_data["trumpet_index"]]["original"])
+
 
 @tasks.loop(hours=1)
 async def hate_nj_vc_loop():
+    await trumpet_message()
     await vc_insult_nj()
+    data.save_save_data()
 
 
 @tasks.loop(seconds=10)
@@ -287,7 +319,6 @@ async def vc_insult_nj():
         data.general.connect()
     file = basic_functions.random_file(data.config["audio_files_dir"])
     vc.play(discord.FFmpegPCMAudio(file), after=lambda err: data.bot.loop.create_task(playlist_song.song_finish(False)))
-
 
 
 data.bot.run(data.local_config["token"])
