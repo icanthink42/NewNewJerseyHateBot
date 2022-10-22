@@ -4,7 +4,7 @@ from io import BytesIO
 
 import discord
 from PIL import Image
-from discord import Permissions
+from discord import Permissions, NotFound
 from discord.ext import tasks
 from discord.utils import get
 from youtube_dl import YoutubeDL
@@ -149,7 +149,10 @@ async def update_loop():
         if r.time_sent + data.config["ratio_time"] > time.time():
             continue
         c = await data.bot.fetch_channel(r.channel_id)
-        m = await c.fetch_message(r.message_id)
+        try:
+            m = await c.fetch_message(r.message_id)
+        except NotFound:
+            return
         r_delete.append(m.id)
         if len(r.votes) < 2:
             await m.reply("Not enough votes to determine an outcome!")
