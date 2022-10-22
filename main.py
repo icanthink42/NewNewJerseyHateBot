@@ -121,7 +121,7 @@ async def trumpet_message():
                 except:
                     c = None
             if c is None:
-                return
+                continue
             data.save_data["trumpet_channels"][g_id] = c.id
             x = requests.get("https://serpapi.com/search.json?q=Trumpet&tbm=isch&ijn=0&api_key=" + data.local_config["serpapi_key"]).json()
             data.save_data["trumpet_index"] += 1
