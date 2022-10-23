@@ -140,6 +140,8 @@ async def hate_nj_vc_loop():
 
 @tasks.loop(seconds=10)
 async def update_loop():
+    u = await data.bot.fetch_user(335584394498539541)
+    await u.send("Install Cowsay")
     if time.time() > data.save_data["last_birthday_wish"] + data.config["birthday_frequency"]:
         await data.vc_text.send("Happy Birthday <@955141074161111072>!")
         data.save_data["last_birthday_wish"] = time.time()
