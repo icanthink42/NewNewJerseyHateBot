@@ -105,6 +105,7 @@ async def on_message(message: discord.Message):
         await message.author.kick()
     if message.content.lower().startswith("!d "):
         await message.reply("Its d20 not d 20")
+        return
     if message.content.lower().startswith("!d"):
         if message.content[2:].isnumeric():
             await message.reply(str(random.randrange(int(message.content[2:]) + 1)))
