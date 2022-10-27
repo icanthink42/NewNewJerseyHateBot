@@ -110,7 +110,7 @@ async def on_message(message: discord.Message):
         if message.content[2:].isnumeric():
             await message.reply(str(random.randrange(int(message.content[2:]) + 1)))
         else:
-            await message.reply("Unknown number: " + message.content[2:])
+            await message.reply(random.choice(message.content[2:]))
 
 
 async def trumpet_message():
