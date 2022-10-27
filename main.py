@@ -103,6 +103,11 @@ async def on_message(message: discord.Message):
             await m.delete()
     if message.content == "mmmkick":
         await message.author.kick()
+    if message.content.lower().startswith("!d"):
+        if message.content[2:].isnumeric():
+            await message.reply(str(random.randrange(int(message.content[2:]) + 1)))
+        else:
+            await message.reply("Unknown number: " + message.content[2:])
 
 
 async def trumpet_message():
