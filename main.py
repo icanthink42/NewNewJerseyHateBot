@@ -104,7 +104,7 @@ async def on_message(message: discord.Message):
     if message.content == "mmmkick":
         await message.author.kick()
     if message.content.lower().startswith("!d "):
-        await message.reply("Its d20 not d 20")
+        await message.reply("It's d20 not d 20")
         return
     if message.content.lower().startswith("!d"):
         if message.content[2:].isnumeric():
