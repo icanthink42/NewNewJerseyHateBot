@@ -16,6 +16,8 @@ from classes import MathQuestion, Ratio, RatioButtons
 from playlist_song import PlaylistSong
 from Deepfry import deepfry
 import requests
+import pexpect
+import RestrictedPython
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -111,6 +113,14 @@ async def on_message(message: discord.Message):
             await message.reply(str(random.randrange(int(message.content[2:]) + 1)))
         else:
             await message.reply(random.choice(message.content[2:]))
+    if message.content.startswith("```py"):
+        src = message.content[6:-3]
+        byte_code = RestrictedPython.compile_restricted(src, filename="<inline code>", mode="exec",)
+        out = ""
+        exec(byte_code, {"__builtins__": RestrictedPython.utility_builtins, "_print_": RestrictedPython.PrintCollector, "_getattr_": getattr, "out": out}, None)
+        await message.reply(out)
+    if "shsh" in message.content.lower().replace("e", "").split(" "):
+        await message.reply("https://images-ext-1.discordapp.net/external/khYpnieTJ8i4m3xrwmPNNEv0Qw5C1srsD3YX-1KkQtY/https/media.tenor.com/jH7aam4YoDIAAAPo/sheesh-shee.mp4")
 
 
 async def trumpet_message():
