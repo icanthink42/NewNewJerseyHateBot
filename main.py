@@ -134,6 +134,28 @@ async def on_message(message: discord.Message):
             await message.reply(str(random.randrange(int(message.content[2:]) + 1)))
         else:
             await message.reply(random.choice(message.content[2:]))
+    if (
+        message.content.startswith("```py")
+        and message.channel.guild.id in data.local_config["trusted_guilds"]
+    ):
+        script = message.content[5:-3]
+        process = subprocess.run(
+            [
+                data.local_config["python_binary"],
+                "-Iu",
+                f"-c {script}",
+            ],
+            capture_output=True,
+            text=True,
+            cwd="not_sandbox",
+        )
+        if process.stdout.strip() == "" and process.stderr.strip() == "":
+            await message.reply("(empty response)")
+        elif process.stdout.strip() != "":
+            await message.reply(f"```{process.stdout}```")
+        else:
+            await message.reply(f"```{process.stderr}```")
+
     if "shsh" in message.content.lower().replace("e", "").split(" "):
         await message.reply(
             "https://images-ext-1.discordapp.net/external/khYpnieTJ8i4m3xrwmPNNEv0Qw5C1srsD3YX-1KkQtY/https/media.tenor.com/jH7aam4YoDIAAAPo/sheesh-shee.mp4"
