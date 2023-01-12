@@ -73,7 +73,10 @@ async def on_message(message: discord.Message):
             )
             del data.save_data["math_questions"][message.reference.message_id]
 
-    if message.channel.id not in data.local_config["channel_whitelist"]:
+    if (
+        message.channel.id not in data.local_config["channel_whitelist"]
+        and message.channel.guild.id not in data.local_config["trusted_guilds"]
+    ):
         return
 
     if (
