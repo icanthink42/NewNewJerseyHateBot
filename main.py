@@ -229,7 +229,8 @@ async def ping(ctx):
 )
 async def exec(ctx, command: str):
     process = subprocess.run(
-        ["docker", "container", "exec", "trustsandbox"] + command.split(" "),
+        ["sudo", "docker", "container", "exec", "trustsandbox"]
+        + command.split(" "),  # yes i know this is a terrible idea
         capture_output=True,
         text=True,
     )
