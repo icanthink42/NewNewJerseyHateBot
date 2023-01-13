@@ -155,9 +155,40 @@ async def on_message(message: discord.Message):
         if process.stdout.strip() == "" and process.stderr.strip() == "":
             await message.reply("(empty response)")
         elif process.stdout.strip() != "":
-            await message.reply(f"```{process.stdout}```")
+            await message.reply(f"```{process.stdout[:1990]}```")
         else:
-            await message.reply(f"```{process.stderr}```")
+            await message.reply(f"```{process.stderr[:1990]}```")
+    if (
+        message.content.startswith("```cpp")
+        and message.channel.guild.id in data.local_config["trusted_guilds"]
+    ):
+        script = message.content[6:-3]
+        f = open("not_sandbox/tmp.cpp", "w")
+        f.write(script)
+        f.close()
+        compile_process = subprocess.run(
+            [data.local_config["cpp_binary"], "tmp.cpp"],
+            capture_output=True,
+            text=True,
+            cwd="not_sandbox",
+        )
+        if compile_process.stderr.strip("") != "":
+            await message.reply(
+                f"**Compiler Error!**```{compile_process.stderr[:1970]}```"
+            )
+            return
+        run_process = subprocess.run(
+            ["./a.out"],
+            capture_output=True,
+            text=True,
+            cwd="not_sandbox",
+        )
+        if run_process.stdout.strip() == "" and run_process.stderr.strip() == "":
+            await message.reply("(empty response)")
+        elif run_process.stdout.strip() != "":
+            await message.reply(f"```{run_process.stdout[:1970]}```")
+        else:
+            await message.reply(f"**Runtime Error!**```{run_process.stderr[:1970]}```")
 
     if "shsh" in message.content.lower().replace("e", "").split(" "):
         await message.reply(
