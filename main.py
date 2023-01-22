@@ -109,8 +109,6 @@ async def on_message(message: discord.Message):
         await message.reply(random.choice(data.config["1984_posts"]))
     if "math" in message.content.lower():
         await message.reply("<@352106212109713408> someone mentioned math!")
-    if "plant" in message.content.lower() and message.author.id != 367834268535226370:
-        await message.reply("<@367834268535226370> someone mentioned plants!")
     if "ratio" in message.content.lower() and message.reference is not None:
         m = await message.reply("Ratio Vote! (0)", view=RatioButtons())
         target_m = await message.channel.fetch_message(message.reference.message_id)
