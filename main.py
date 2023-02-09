@@ -206,14 +206,14 @@ async def trumpet_message():
                     c = None
             if c is None:
                 try:
-                    c = await g.create_text_channel("🎺")
+                    c = await g.create_text_channel("📯")
                 except:
                     c = None
             if c is None:
                 continue
             data.save_data["trumpet_channels"][g_id] = c.id
             x = requests.get(
-                "https://serpapi.com/search.json?q=Trumpet&tbm=isch&ijn=0&api_key="
+                "https://serpapi.com/search.json?q=French Horn&tbm=isch&ijn=0&api_key="
                 + data.local_config["serpapi_key"]
             ).json()
             data.save_data["trumpet_index"] += 1
