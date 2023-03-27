@@ -34,6 +34,7 @@ data.fix_data()
 
 @data.bot.event
 async def on_ready():
+    cruz = await data.bot.fetch_user(365901796394270720)
     data.general = await data.bot.fetch_channel(data.local_config["general_id"])
     data.vc_text = await data.bot.fetch_channel(data.local_config["vc_text_id"])
     data.cole = await data.bot.fetch_user(data.local_config["cole_id"])
@@ -49,6 +50,7 @@ async def on_ready():
         data.save_data["trumpet_channels"] = {}
     print(f"We have logged in as {data.bot.user}")
     hate_nj_vc_loop.start()
+    elephant_loop.start()
     update_loop.start()
 
 
@@ -230,6 +232,11 @@ async def hate_nj_vc_loop():
     await trumpet_message()
     await vc_insult_nj()
     data.save_save_data()
+
+
+@tasks.loop(seconds=1)
+async def elephant_loop():
+    await cruz.send("🐘")
 
 
 @tasks.loop(seconds=10)
