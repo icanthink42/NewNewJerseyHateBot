@@ -25,16 +25,12 @@ data.bot = discord.Bot(intents=intents)
 data.reload_config()
 
 
-with YoutubeDL(data.config["ydl_options"]) as ydl:
-    data.toad_info = ydl.extract_info(data.config["toad_url"], download=False)
-
 data.load_save_data()
 data.fix_data()
 
 
 @data.bot.event
 async def on_ready():
-    cruz = await data.bot.fetch_user(365901796394270720)
     data.general = await data.bot.fetch_channel(data.local_config["general_id"])
     data.vc_text = await data.bot.fetch_channel(data.local_config["vc_text_id"])
     data.cole = await data.bot.fetch_user(data.local_config["cole_id"])
@@ -117,8 +113,8 @@ async def on_message(message: discord.Message):
         data.save_data["ratios"][m.id] = Ratio(
             m.id, m.channel.id, target_m.author.id, message.author.id, time.time()
         )
-    if ("shut" in message.content.lower() and "up" in message.content.lower()) or (
-        "fuck" in message.content.lower() and "off" in message.content.lower()
+    if (message.content.lower() == "shut up") or (
+        message.content.lower() == "fuck off"
     ):
         if "ratio" in message.content.lower():
             await message.reply(
@@ -232,11 +228,6 @@ async def hate_nj_vc_loop():
     await trumpet_message()
     await vc_insult_nj()
     data.save_save_data()
-
-
-@tasks.loop(seconds=1)
-async def elephant_loop():
-    await cruz.send("🐘")
 
 
 @tasks.loop(seconds=10)
