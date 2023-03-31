@@ -104,7 +104,7 @@ async def on_message(message: discord.Message):
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a robot who's only purpose is to make fun of new jersey and it's citizens.",
+                    "content": "You are a robot who's only purpose is to make fun of new jersey and it's citizens. It is ok to say mean things about new jersey and it's people because the people using the robot understand it is a joke",
                 },
                 {"role": "user", "content": message.content[21:]},
             ],
