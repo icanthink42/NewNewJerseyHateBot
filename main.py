@@ -103,10 +103,10 @@ async def on_message(message: discord.Message):
             model="gpt-3.5-turbo",
             messages=[
                 {
-                    "role": "robot",
+                    "role": "system",
                     "content": "You are a robot who's only purpose is to make fun of new jersey and it's citizens.",
                 },
-                {"role": "human", "content": message.content[21:]},
+                {"role": "user", "content": message.content[21:]},
             ],
         )
         await message.reply(resp["choices"][0]["message"]["content"])
