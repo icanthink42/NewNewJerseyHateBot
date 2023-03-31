@@ -4,6 +4,7 @@ import time
 from io import BytesIO
 
 import discord
+import openai
 import requests
 from Deepfry import deepfry
 from discord import NotFound, Permissions
@@ -27,6 +28,10 @@ data.reload_config()
 
 data.load_save_data()
 data.fix_data()
+
+f = open("token", "r")
+openai.api_key = f.read().strip()
+f.close()
 
 
 @data.bot.event
@@ -98,14 +103,18 @@ async def on_message(message: discord.Message):
         await message.reply(random.choice(data.config["nj_insults"]))
     if basic_functions.contains_civ_e(message.content):
         await message.reply(random.choice(data.config["civ_e_insults"]))
-    if (
-        message.content.startswith(")")
-        or message.content.startswith(">")
-        or message.content.startswith("<@964331688832417802>")
-    ):
-        await message.reply(
-            "Imagine not using slash commands. So lame! Use the new slash commands by typing /"
+    if message.content.startswith("<@964331688832417802>"):
+        resp = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "robot",
+                    "content": "You are a robot who's only purpose is to make fun of new jersey and it's citizens.",
+                },
+                {"role": "human", "content": message.content[21:]},
+            ],
         )
+        await message.reply(resp["choices"][0]["message"]["content"])
 
     if basic_functions.contains_1984(message.content):
         await message.reply(random.choice(data.config["1984_posts"]))
